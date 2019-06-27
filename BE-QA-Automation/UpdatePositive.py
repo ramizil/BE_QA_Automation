@@ -1,9 +1,10 @@
+#Positive update first name and last name
 import requests
 import json
 import jsonpath
 
 #URL
-url = "https://rest-eus1.ott.kaltura.com/restful_v5_0/api_v3/service/ottuser/action/login"
+url = "https://rest-eus1.ott.kaltura.com/restful_v5_0/api_v3/service/ottuser/action/update"
 
 #Setting header and proxy
 headers = {"content-type": "application/json"}
@@ -15,8 +16,9 @@ proxyDict = {
               "https" : https_proxy
             }
 
-
-json_input = '{"partnerId": 185, "username": "xympdpkyymlh1537875168491", "password": "password", "udid": "881033"}'
+FN="Rami"
+LN="Test"
+json_input = '{user: {firstName: "'+FN+'", lastName: "'+LN+'" }, id: 881033}'
 request_value = json.loads(json_input)
 request_json = json.dumps(request_value)
 print(request_json)
@@ -30,12 +32,13 @@ assert response.status_code == 200
 response_json = json.loads(response.text)
 
 # Pick refresh token
-result = jsonpath.jsonpath(response_json,'result.loginSession.ks')
-print("KS: "+result[0])
+resultA = jsonpath.jsonpath(response_json,'result.user.firstName')
+print("firstName: "+resultA[0])
+resultB = jsonpath.jsonpath(response_json,'result.user.lastName')
+print("lastName: "+resultB[0])
 
-assert jsonpath.jsonpath(response_json,'result.loginSession.ks') > 0
 
-if result[0] != "":
+if (resultA[0] == FN) and (resultB[0] == LN):
     print("Passed")
 else:
     print("Failed")

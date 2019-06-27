@@ -3,7 +3,7 @@ import json
 import jsonpath
 
 #URL
-url = "https://rest-eus1.ott.kaltura.com/restful_v5_0/api_v3/service/ottuser/action/register"
+url = "https://rest-eus1.ott.kaltura.com/restful_v5_0/api_v3/service/ottuser/action/login"
 
 #Setting header and proxy
 headers = {"content-type": "application/json"}
@@ -16,7 +16,7 @@ proxyDict = {
             }
 
 
-json_input ='{"partnerId": 185,"user": {"objectType": "KalturaOTTUser", "username": "xympdpkyymlh1537875168491", "firstName": "xympdpkyymlh", "lastName": "1537875168491", "email": "qaott2018+xympdpkyymlh1537875168491@gmail.com", "address":"xympdpkyymlh fake address", "city": "xympdpkyymlh fake city", "countryId": 7, "externalId": "xympdpkyymlh1537875168491"}, "password": "password"}'
+json_input = '{"partnerId": 185, "username": "xympdpkyymlh1537875168491", "password": "password", "udid": "881033"}'
 request_value = json.loads(json_input)
 request_json = json.dumps(request_value)
 print(request_json)
@@ -30,11 +30,12 @@ assert response.status_code == 200
 response_json = json.loads(response.text)
 
 # Pick refresh token
-result = jsonpath.jsonpath(response_json,'result.partnerId')
-print("partnerId: "+result[0])
+result = jsonpath.jsonpath(response_json,'result.loginSession.ks')
+print("KS: "+result[0])
 
-#Print test status
-if result[0] > 0:
+assert jsonpath.jsonpath(response_json,'result.loginSession.ks') > 0
+
+if result[0] != "":
     print("Passed")
 else:
     print("Failed")
